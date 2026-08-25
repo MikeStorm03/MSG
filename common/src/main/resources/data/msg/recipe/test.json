@@ -1,0 +1,14 @@
+{
+    "type": "msg:brewing",
+    "ingredient": [
+        {
+            "id": "minecraft:rotten_flesh"
+        }
+    ],
+    "input": {
+        "id": "minecraft:bowl"
+    },
+    "result": {
+        "id": "minecraft:zombie_head"
+    }
+}
