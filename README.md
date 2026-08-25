@@ -1,4 +1,4 @@
-# Mod Name
+# MSG
 
 A Minecraft mod that allows players to create custom brewing recipes using datapacks.
 
