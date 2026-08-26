@@ -24,3 +24,6 @@ run
 runs
 shortcut/
 *.ico
+*.ini
+data/
+logo_with_bg.png

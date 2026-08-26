@@ -23,10 +23,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 @Mixin(PotionSlot.class)
 public class PotionSlotMixin {
-    @Inject(method = "Lnet/minecraft/world/inventory/BrewingStandMenu$PotionSlot;mayPlace(Lnet/minecraft/world/item/ItemStack;)Z",
+    @Inject(method = "Lnet/minecraft/world/inventory/BrewingStandMenu$PotionSlot;mayPlaceItem(Lnet/minecraft/world/item/ItemStack;)Z",
             at = @At("RETURN"),
             cancellable = true)
-    private void injected(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
+    private static void injected(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
         List<RecipeHolder<BrewingRecipe>> allBrewRecipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(ModRecipeType.BREWING);
         for (RecipeHolder<BrewingRecipe> recipeHolder : allBrewRecipes) {
             if (itemStack.is(recipeHolder.value().getInputItems()))
