@@ -15,15 +15,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import com.msg.library.recipe.brewing.BrewingRecipe;
 import com.msg.library.recipe.brewing.BrewingRecipeInput;
-import com.msg.library.recipe.brewing.ModRecipeType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
@@ -31,9 +30,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityMixin {
-
-    private static final RecipeManager.CachedCheck<BrewingRecipeInput, ? extends BrewingRecipe> recipeCheck = RecipeManager.createCheck(ModRecipeType.BREWING);
-
 
     @ModifyVariable(
         method = "Lnet/minecraft/world/level/block/entity/BrewingStandBlockEntity;serverTick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BrewingStandBlockEntity;)V",
@@ -44,7 +40,7 @@ public class BrewingStandBlockEntityMixin {
         ItemStack ingredient = brewingStandBlockEntity.getItem(3);
         @Nullable RecipeHolder<? extends BrewingRecipe> recipeHolder = null;
         for (int i = 0; i < 3; i++) {
-            recipeHolder = recipeCheck.getRecipeFor(new BrewingRecipeInput(ingredient, brewingStandBlockEntity.getItem(i)), level).orElse(null);
+            recipeHolder = BrewingRecipe.recipeCheck.getRecipeFor(new BrewingRecipeInput(ingredient, brewingStandBlockEntity.getItem(i)), (ServerLevel) level).orElse(null);
             if (recipeHolder != null) break; 
         }
         return bool || recipeHolder != null;
@@ -66,7 +62,7 @@ public class BrewingStandBlockEntityMixin {
 
             for (int i = 0; i < 3; i++) {
 
-                recipe = recipeCheck.getRecipeFor(new BrewingRecipeInput(ingredient, nonNullList.get(i)), level).orElse(null);
+                recipe = BrewingRecipe.recipeCheck.getRecipeFor(new BrewingRecipeInput(ingredient, nonNullList.get(i)), (ServerLevel) level).orElse(null);
 
                 if (recipe == null) nonNullList.set(i, potionBrewing.mix(ingredient, nonNullList.get(i)));
                 else {
@@ -81,14 +77,13 @@ public class BrewingStandBlockEntityMixin {
             }
 
             ingredient.shrink(ingredientCost);
-            if (ingredient.getItem().hasCraftingRemainingItem()) {
-                ItemStack remainingItem = new ItemStack(ingredient.getItem().getCraftingRemainingItem());
+            ItemStack remainingItem = ingredient.getItem().getCraftingRemainder();
+            if (!remainingItem.isEmpty())
                 if (ingredient.isEmpty()) {
                     ingredient = remainingItem;
                 } else {
                     Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), remainingItem);
                 }
-            }
 
             nonNullList.set(3, ingredient);
             level.levelEvent(1035, blockPos, 0);

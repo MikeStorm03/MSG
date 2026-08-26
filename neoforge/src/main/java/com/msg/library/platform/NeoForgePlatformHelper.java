@@ -1,10 +1,18 @@
 package com.msg.library.platform;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import com.msg.library.platform.services.IPlatformHelper;
-import net.neoforged.fml.ModList;
+import com.msg.library.recipe.brewing.BrewingRecipe;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.fml.loading.FMLLoader;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
+    @Nullable
+    public static List<RecipeHolder<BrewingRecipe>> allBrewRecipes = null;
 
     @Override
     public String getPlatformName() {
@@ -13,9 +21,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public boolean isModLoaded(String modId) {
-
-        return ModList.get().isLoaded(modId);
+    public List<RecipeHolder<BrewingRecipe>> getAllBrewRecipe() {
+        return allBrewRecipes;
     }
 
     @Override

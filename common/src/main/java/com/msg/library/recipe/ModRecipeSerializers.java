@@ -5,9 +5,11 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
-package com.msg.library.recipe.brewing;
+package com.msg.library.recipe;
 
 import com.msg.library.Constants;
+import com.msg.library.recipe.brewing.BrewingRecipe;
+import com.msg.library.recipe.brewing.BrewingRecipeSerializer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

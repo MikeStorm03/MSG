@@ -1,5 +1,11 @@
 package com.msg.library.platform.services;
 
+import java.util.List;
+
+import com.msg.library.recipe.brewing.BrewingRecipe;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
+
 public interface IPlatformHelper {
 
     /**
@@ -9,13 +15,7 @@ public interface IPlatformHelper {
      */
     String getPlatformName();
 
-    /**
-     * Checks if a mod with the given id is loaded.
-     *
-     * @param modId The mod to check if it is loaded.
-     * @return True if the mod is loaded, false otherwise.
-     */
-    boolean isModLoaded(String modId);
+    List<RecipeHolder<BrewingRecipe>> getAllBrewRecipe();
 
     /**
      * Check if the game is currently in a development environment.

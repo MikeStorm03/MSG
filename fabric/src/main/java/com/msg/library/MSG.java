@@ -8,10 +8,18 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 package com.msg.library;
 
-import com.msg.library.recipe.brewing.ModRecipeSerializers;
-import com.msg.library.recipe.brewing.ModRecipeType;
+import java.util.ArrayList;
+import java.util.stream.Stream;
+
+import com.msg.library.platform.FabricPlatformHelper;
+import com.msg.library.recipe.ModRecipeBookCategories;
+import com.msg.library.recipe.ModRecipeSerializers;
+import com.msg.library.recipe.ModRecipeType;
+import com.msg.library.recipe.brewing.BrewingRecipe;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class MSG implements ModInitializer{
 
@@ -19,5 +27,26 @@ public class MSG implements ModInitializer{
     public void onInitialize() {
         ModRecipeType.init();
         ModRecipeSerializers.init();
+        ModRecipeBookCategories.init();
+
+        ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+            Stream<RecipeHolder<?>> recipeStream = server.getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == ModRecipeType.BREWING);
+            FabricPlatformHelper.allBrewRecipes = new ArrayList<>();
+            for (RecipeHolder<?> recipeHolder : recipeStream.toList()) {
+                if (recipeHolder.value() instanceof BrewingRecipe recipe) {
+                    FabricPlatformHelper.allBrewRecipes.add(new RecipeHolder<>(recipeHolder.id(), recipe));
+                }
+            }
+        });
+
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, serverResourceManager, success) -> {
+            Stream<RecipeHolder<?>> recipeStream = server.getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == ModRecipeType.BREWING);
+            FabricPlatformHelper.allBrewRecipes = new ArrayList<>();
+            for (RecipeHolder<?> recipeHolder : recipeStream.toList()) {
+                if (recipeHolder.value() instanceof BrewingRecipe recipe) {
+                    FabricPlatformHelper.allBrewRecipes.add(new RecipeHolder<>(recipeHolder.id(), recipe));
+                }
+            }
+        });
     }
 }

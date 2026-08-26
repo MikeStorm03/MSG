@@ -10,6 +10,11 @@ package com.msg.library.recipe.brewing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
+import com.msg.library.recipe.ModRecipeBookCategories;
+import com.msg.library.recipe.ModRecipeSerializers;
+import com.msg.library.recipe.ModRecipeType;
 import com.msg.library.recipe.NBTCraftingIngredients;
 
 // import com.msg.library.Constants;
@@ -17,7 +22,10 @@ import com.msg.library.recipe.NBTCraftingIngredients;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -28,6 +36,8 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
     protected final ItemStack input;
     protected final ItemStack result;
     public static final RecipeManager.CachedCheck<BrewingRecipeInput, ? extends BrewingRecipe> recipeCheck = RecipeManager.createCheck(ModRecipeType.BREWING);
+    @Nullable
+    private PlacementInfo placementInfo;
 
     public BrewingRecipe(List<ItemStack> ingredients, ItemStack input, ItemStack output) {
         this.ingredients = ingredients;
@@ -46,8 +56,14 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         return matches(this.ingredients, input.ingredient()) && matches(this.input, input.input());
     }
 
+    @Override
     public ItemStack assemble(BrewingRecipeInput input, HolderLookup.Provider registries) {
         return this.result.copy();
+    }
+
+    @Override
+    public boolean showNotification() {
+        return false;
     }
 
     public boolean canCraftInDimensions(int width, int height) {
@@ -76,11 +92,8 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         return this.result;
     }
 
-    public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return this.result;
-    }
-
-    public RecipeType<?> getType() {
+    @Override
+    public RecipeType<BrewingRecipe> getType() {
         return ModRecipeType.BREWING;
     }
 
@@ -89,7 +102,24 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<BrewingRecipe> getSerializer() {
         return ModRecipeSerializers.BREWING_RECIPE;
+    }
+
+    @Override
+    public PlacementInfo placementInfo() {
+        if (this.placementInfo == null) {
+            List<Ingredient> ingredientList = new ArrayList<>();
+            for (ItemStack itemStack : this.ingredients) {
+                ingredientList.add(Ingredient.of(itemStack.getItem()));
+            }
+            this.placementInfo = PlacementInfo.create(ingredientList);
+        }
+        return this.placementInfo;
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return ModRecipeBookCategories.BREWING;
     }
 }

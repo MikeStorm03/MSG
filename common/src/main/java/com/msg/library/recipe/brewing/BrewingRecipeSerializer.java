@@ -49,14 +49,14 @@ public class BrewingRecipeSerializer<T extends BrewingRecipe> implements RecipeS
     }
 
     private T fromNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf) {
-        List<ItemStack> ingredients = ItemStack.LIST_STREAM_CODEC.decode(registryFriendlyByteBuf);
+        List<ItemStack> ingredients = ItemStack.OPTIONAL_LIST_STREAM_CODEC.decode(registryFriendlyByteBuf);
         ItemStack input = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
         ItemStack result = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
         return (T)this.factory.create(ingredients, input, result);
     }
 
     private void toNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf, T brewingRecipe) {
-        ItemStack.LIST_STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.ingredients);
+        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.ingredients);
         ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.input);
         ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.result);
     }
