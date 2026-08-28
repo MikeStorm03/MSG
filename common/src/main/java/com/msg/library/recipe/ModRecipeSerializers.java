@@ -9,20 +9,18 @@ package com.msg.library.recipe;
 
 import com.msg.library.Constants;
 import com.msg.library.recipe.brewing.BrewingRecipe;
-import com.msg.library.recipe.brewing.BrewingRecipeSerializer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public interface ModRecipeSerializers {
 
-    RecipeSerializer<BrewingRecipe> BREWING_RECIPE = register("brewing", new BrewingRecipeSerializer<>(BrewingRecipe::new));
-
-    static <S extends RecipeSerializer<T>, T extends Recipe<?>> S register(String string, S recipeSerializer) {
-        return (S)(Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Constants.resourceLocation(string), recipeSerializer));
+    static void registryRecipeSerializer(String name, RecipeSerializer<?> serializer){
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Constants.resourceLocation(name), serializer);
     }
 
-    static void init(){}
+    static void init(){
+        registryRecipeSerializer("brewing", BrewingRecipe.SERIALIZER);
+    }
 }

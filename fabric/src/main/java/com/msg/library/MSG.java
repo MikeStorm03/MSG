@@ -19,6 +19,7 @@ import com.msg.library.recipe.brewing.BrewingRecipe;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class MSG implements ModInitializer{
@@ -29,17 +30,8 @@ public class MSG implements ModInitializer{
         ModRecipeSerializers.init();
         ModRecipeBookCategories.init();
 
-        ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
-            Stream<RecipeHolder<?>> recipeStream = server.getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == ModRecipeType.BREWING);
-            FabricPlatformHelper.allBrewRecipes = new ArrayList<>();
-            for (RecipeHolder<?> recipeHolder : recipeStream.toList()) {
-                if (recipeHolder.value() instanceof BrewingRecipe recipe) {
-                    FabricPlatformHelper.allBrewRecipes.add(new RecipeHolder<>(recipeHolder.id(), recipe));
-                }
-            }
-        });
-
-        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, serverResourceManager, success) -> {
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
+            MinecraftServer server = player.level().getServer();
             Stream<RecipeHolder<?>> recipeStream = server.getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == ModRecipeType.BREWING);
             FabricPlatformHelper.allBrewRecipes = new ArrayList<>();
             for (RecipeHolder<?> recipeHolder : recipeStream.toList()) {

@@ -21,6 +21,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
@@ -55,7 +56,7 @@ public class BrewingStandBlockEntityMixin {
         BlockEntity brewingStandBlockEntity = level.getBlockEntity(blockPos);
         if (brewingStandBlockEntity instanceof BrewingStandBlockEntity) {
 
-            ItemStack ingredient = (ItemStack)nonNullList.get(3);
+            ItemStack ingredient = nonNullList.get(3);
             @Nullable RecipeHolder<? extends BrewingRecipe> recipe;
             PotionBrewing potionBrewing = level.potionBrewing();
             int ingredientCost = 1;
@@ -66,23 +67,23 @@ public class BrewingStandBlockEntityMixin {
 
                 if (recipe == null) nonNullList.set(i, potionBrewing.mix(ingredient, nonNullList.get(i)));
                 else {
-                    nonNullList.set(i, recipe.value().getResultItem().copy());
-                    for (ItemStack recipeIngredient : recipe.value().getIngredientItemStacks()) 
-                        if (ItemStack.isSameItem(recipeIngredient, ingredient)) {
-                            if (recipeIngredient.getCount() > ingredientCost)
-                                ingredientCost = recipeIngredient.getCount();
+                    nonNullList.set(i, recipe.value().result().create());
+                    for (ItemStackTemplate recipeIngredient : recipe.value().ingredients()) 
+                        if (ingredient.is(recipeIngredient.item())) {
+                            if (recipeIngredient.count() > ingredientCost)
+                                ingredientCost = recipeIngredient.count();
                             break;
                         }
                 }
             }
 
             ingredient.shrink(ingredientCost);
-            ItemStack remainingItem = ingredient.getItem().getCraftingRemainder();
-            if (!remainingItem.isEmpty())
+            ItemStackTemplate remainder = ingredient.getItem().getCraftingRemainder();
+            if (remainder != null)
                 if (ingredient.isEmpty()) {
-                    ingredient = remainingItem;
+                    ingredient = remainder.create();
                 } else {
-                    Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), remainingItem);
+                    Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), remainder.create());
                 }
 
             nonNullList.set(3, ingredient);

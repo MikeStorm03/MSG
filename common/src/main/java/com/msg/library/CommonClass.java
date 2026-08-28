@@ -13,7 +13,6 @@ import com.msg.library.platform.Services;
 public class CommonClass {
 
     public static void init() {
-
         Constants.LOG.info("{} is runnning on {}!", Constants.MOD_NAME, Services.PLATFORM.getPlatformName());
     }
 }

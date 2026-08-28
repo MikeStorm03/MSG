@@ -11,7 +11,7 @@ package com.msg.library;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface Constants {
 
@@ -19,7 +19,8 @@ public interface Constants {
 	String MOD_NAME = "MSG";
 	Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
-	static ResourceLocation resourceLocation(String name) {
-		return ResourceLocation.fromNamespaceAndPath("msg", name);
+	
+	static Identifier resourceLocation(String name) {
+		return Identifier.fromNamespaceAndPath("msg", name);
 	}
 }

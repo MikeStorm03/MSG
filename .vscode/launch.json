@@ -18,7 +18,7 @@
         "@D:\\Minecraft\\Stuffs\\mods\\MSG\\neoforge\\build\\moddev\\clientRunVmArgs.txt",
         "-Dfml.modFolders\u003dmsg_library%%D:\\Minecraft\\Stuffs\\mods\\MSG\\neoforge\\bin\\main"
       ],
-      "cwd": "${workspaceFolder}\\neoforge\\run",
+      "cwd": "${workspaceFolder}\\neoforge\\runs\\client",
       "env": {},
       "console": "internalConsole",
       "shortenCommandLine": "none"
@@ -40,7 +40,7 @@
         "@D:\\Minecraft\\Stuffs\\mods\\MSG\\neoforge\\build\\moddev\\dataRunVmArgs.txt",
         "-Dfml.modFolders\u003dmsg_library%%D:\\Minecraft\\Stuffs\\mods\\MSG\\neoforge\\bin\\main"
       ],
-      "cwd": "${workspaceFolder}\\neoforge\\run",
+      "cwd": "${workspaceFolder}\\neoforge\\runs\\data",
       "env": {},
       "console": "internalConsole",
       "shortenCommandLine": "none"
@@ -62,7 +62,7 @@
         "@D:\\Minecraft\\Stuffs\\mods\\MSG\\neoforge\\build\\moddev\\serverRunVmArgs.txt",
         "-Dfml.modFolders\u003dmsg_library%%D:\\Minecraft\\Stuffs\\mods\\MSG\\neoforge\\bin\\main"
       ],
-      "cwd": "${workspaceFolder}\\neoforge\\run",
+      "cwd": "${workspaceFolder}\\neoforge\\runs\\server",
       "env": {},
       "console": "internalConsole",
       "shortenCommandLine": "none"

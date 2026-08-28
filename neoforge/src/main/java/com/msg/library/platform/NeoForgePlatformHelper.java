@@ -10,6 +10,7 @@ import com.msg.library.recipe.brewing.BrewingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.fml.loading.FMLLoader;
 
+
 public class NeoForgePlatformHelper implements IPlatformHelper {
     @Nullable
     public static List<RecipeHolder<BrewingRecipe>> allBrewRecipes = null;
@@ -27,7 +28,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean isDevelopmentEnvironment() {
-
-        return !FMLLoader.isProduction();
+        return !FMLLoader.getCurrent().isProduction();
     }
 }

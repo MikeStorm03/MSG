@@ -13,19 +13,20 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 
 public interface NBTCraftingIngredients {
 
-    default boolean matches(@Nullable ItemStack ingredient, ItemStack itemStack) {
-        if (ItemStack.isSameItem(ingredient, itemStack) &&
-            ItemStack.isSameItemSameComponents(ingredient, itemStack) &&
-            ingredient.getCount() <= itemStack.getCount())
+    default boolean matches(@Nullable ItemStackTemplate ingredient, ItemStack itemStack) {
+        if (itemStack.is(ingredient.item()) &&
+            itemStack.getComponentsPatch().equals(ingredient.components()) &&
+            ingredient.count() <= itemStack.getCount())
                 return true;
         return false;
     }
 
-    default boolean matches(@Nullable List<ItemStack> ingredients, ItemStack itemStack) {
-        for (ItemStack ingredient : ingredients) if (matches(ingredient, itemStack)) return true;
+    default boolean matches(@Nullable List<ItemStackTemplate> ingredients, ItemStack itemStack) {
+        for (ItemStackTemplate ingredient : ingredients) if (matches(ingredient, itemStack)) return true;
         return false;
     }
 }
