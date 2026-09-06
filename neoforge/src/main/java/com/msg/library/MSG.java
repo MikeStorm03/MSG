@@ -8,23 +8,27 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 package com.msg.library;
 
-import java.util.ArrayList;
-import java.util.stream.Stream;
-
-import com.msg.library.platform.NeoForgePlatformHelper;
+import com.msg.library.event.DatapackReloadEvent;
+import com.msg.library.event.DatapackReloadListener;
+import com.msg.library.networking.ConnectionHandling;
+import com.msg.library.networking.MSGPackets;
 import com.msg.library.recipe.ModRecipeBookCategories;
 import com.msg.library.recipe.ModRecipeSerializers;
 import com.msg.library.recipe.ModRecipeType;
-import com.msg.library.recipe.brewing.BrewingRecipe;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.HandlerThread;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 @Mod(Constants.MOD_ID)
@@ -33,6 +37,14 @@ public class MSG {
 
     public MSG() {
         CommonClass.init();
+        customEventsRegistering();
+    }
+
+    public static void customEventsRegistering(){
+        DatapackReloadEvent.AFTER.register((server, reloadableServerResources, success) -> {
+            ConnectionHandling.loadBrewingInputs(reloadableServerResources.getRecipeManager());
+            Constants.LOG.info("Loading custom event.");
+        });
     }
 
     @SubscribeEvent
@@ -44,14 +56,36 @@ public class MSG {
     }
 
     @SubscribeEvent
-    public static void resourceLoadedEvent(OnDatapackSyncEvent event) {
-        MinecraftServer server = event.getPlayer().level().getServer();
-        Stream<RecipeHolder<?>> recipeStream = server.getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == ModRecipeType.BREWING);
-        NeoForgePlatformHelper.allBrewRecipes = new ArrayList<>();
-        for (RecipeHolder<?> recipeHolder : recipeStream.toList()) {
-            if (recipeHolder.value() instanceof BrewingRecipe recipe) {
-                NeoForgePlatformHelper.allBrewRecipes.add(new RecipeHolder<>(recipeHolder.id(), recipe));
-            }
-        }
+    public static void addServerReloadListenersEvent(AddServerReloadListenersEvent event) {
+        event.addListener(Constants.resourceLocation("datapack_reload_listener"), new DatapackReloadListener(event.getServerResources()));
+    }
+
+    @SubscribeEvent
+    public static void register(RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar("1")
+            .executesOn(HandlerThread.NETWORK); 
+        registrar.playToClient(
+            MSGPackets.BrewingPackets.ID,
+            MSGPackets.BrewingPackets.CODEC
+        );
+    }
+
+    @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event) {
+        ConnectionHandling.loadBrewingInputs(event.getServer().getRecipeManager());
+        Constants.LOG.info("Loaded server started event.");
+    }
+
+    @SubscribeEvent
+    public static void onDatapackSync(OnDatapackSyncEvent event) {
+        ServerPlayer playerJoining = event.getPlayer();
+        if (playerJoining == null)
+            event.getRelevantPlayers().forEach(playerOnline -> {
+                if (!playerOnline.level().getServer().isSingleplayerOwner(playerOnline.nameAndId()))
+                    PacketDistributor.sendToPlayer(playerOnline, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewIngredients, ConnectionHandling.allBrewInputs));
+                });
+        else
+            if (!playerJoining.level().getServer().isSingleplayerOwner(playerJoining.nameAndId()))
+                PacketDistributor.sendToPlayer(playerJoining, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewIngredients, ConnectionHandling.allBrewInputs));
     }
 }

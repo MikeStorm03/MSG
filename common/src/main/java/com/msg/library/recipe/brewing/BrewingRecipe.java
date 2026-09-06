@@ -55,7 +55,7 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
                                                 ItemStackTemplate.STREAM_CODEC, BrewingRecipe::input,
                                                 ItemStackTemplate.STREAM_CODEC, BrewingRecipe::result,
                                                 BrewingRecipe::new);
-    public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new RecipeSerializer<BrewingRecipe>(MAP_CODEC, STREAM_CODEC);;
+    public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new RecipeSerializer<BrewingRecipe>(MAP_CODEC, STREAM_CODEC);
 
     public BrewingRecipe(List<ItemStackTemplate> ingredients, ItemStackTemplate input, ItemStackTemplate output) {
         this.ingredients = ingredients;
@@ -108,11 +108,11 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         return this.input;
     }
 
-    public Item getInputItems() {
+    public Item getInputItem() {
         return this.input.item().value();
     }
 
-    public ItemStack getInputStacks() {
+    public ItemStack getInputStack() {
         return this.input.create();
     }
 

@@ -7,6 +7,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 package com.msg.library.recipe;
 
+import com.msg.library.CommonClass;
 import com.msg.library.Constants;
 import com.msg.library.recipe.brewing.BrewingRecipe;
 
@@ -17,6 +18,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 public interface ModRecipeSerializers {
 
     static void registryRecipeSerializer(String name, RecipeSerializer<?> serializer){
+        CommonClass.ignoreNameSpace.add(name);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Constants.resourceLocation(name), serializer);
     }
 

@@ -8,19 +8,16 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 package com.msg.library;
 
-import java.util.ArrayList;
-import java.util.stream.Stream;
-
-import com.msg.library.platform.FabricPlatformHelper;
+import com.msg.library.networking.PacketHandler;
 import com.msg.library.recipe.ModRecipeBookCategories;
 import com.msg.library.recipe.ModRecipeSerializers;
 import com.msg.library.recipe.ModRecipeType;
-import com.msg.library.recipe.brewing.BrewingRecipe;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.crafting.RecipeHolder;
+// import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+// import net.fabricmc.fabric.api.event.registry.RegistryAttributeHolder;
+// import net.fabricmc.fabric.impl.registry.sync.RegistrySyncManager;
+// import net.minecraft.core.registries.Registries;
 
 public class MSG implements ModInitializer{
 
@@ -30,15 +27,7 @@ public class MSG implements ModInitializer{
         ModRecipeSerializers.init();
         ModRecipeBookCategories.init();
 
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
-            MinecraftServer server = player.level().getServer();
-            Stream<RecipeHolder<?>> recipeStream = server.getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == ModRecipeType.BREWING);
-            FabricPlatformHelper.allBrewRecipes = new ArrayList<>();
-            for (RecipeHolder<?> recipeHolder : recipeStream.toList()) {
-                if (recipeHolder.value() instanceof BrewingRecipe recipe) {
-                    FabricPlatformHelper.allBrewRecipes.add(new RecipeHolder<>(recipeHolder.id(), recipe));
-                }
-            }
-        });
+        PacketHandler.payloadRegistering();
+        PacketHandler.serverpacket();
     }
 }

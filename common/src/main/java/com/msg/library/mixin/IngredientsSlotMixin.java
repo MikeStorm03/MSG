@@ -12,13 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.msg.library.platform.Services;
-import com.msg.library.recipe.brewing.BrewingRecipe;
+import com.msg.library.networking.ConnectionHandling;
 
 import net.minecraft.world.inventory.BrewingStandMenu.IngredientsSlot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.ItemStackTemplate;
 
 @Mixin(IngredientsSlot.class)
 public class IngredientsSlotMixin {
@@ -26,11 +24,12 @@ public class IngredientsSlotMixin {
             at = @At("RETURN"),
             cancellable = true)
     private void injected(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
-        // Constants.LOG.info("All recipe are:\n\r\r{}", Minecraft.getInstance().getConnection().recipes().stonecutterRecipes());
-        if (Services.PLATFORM.getAllBrewRecipe() != null)
-            for (RecipeHolder<BrewingRecipe> recipeHolder : Services.PLATFORM.getAllBrewRecipe())
-                for (Item ingredient : recipeHolder.value().getIngredientItems())
-                    if (itemStack.is(ingredient))
-                        cir.setReturnValue(true);
+        if (ConnectionHandling.allBrewIngredients != null)
+            for (ItemStackTemplate brewingIngredient : ConnectionHandling.allBrewIngredients)
+                if (itemStack.is(brewingIngredient.item()) &&
+                    brewingIngredient.components().equals(itemStack.getComponentsPatch())) {
+                    cir.setReturnValue(true);
+                    break;
+                }
     }
 }

@@ -1,21 +1,13 @@
 package com.msg.library.platform.services;
 
-import java.util.List;
-
-import com.msg.library.recipe.brewing.BrewingRecipe;
-
-import net.minecraft.world.item.crafting.RecipeHolder;
-
 public interface IPlatformHelper {
 
     /**
      * Gets the name of the current platform
-     *
+     *s
      * @return The name of the current platform.
      */
     String getPlatformName();
-
-    List<RecipeHolder<BrewingRecipe>> getAllBrewRecipe();
 
     /**
      * Check if the game is currently in a development environment.

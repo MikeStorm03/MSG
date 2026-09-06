@@ -7,6 +7,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 package com.msg.library.recipe;
 
+import com.msg.library.CommonClass;
 import com.msg.library.Constants;
 import com.msg.library.recipe.brewing.BrewingRecipe;
 
@@ -19,8 +20,9 @@ public interface ModRecipeType {
 
     RecipeType<BrewingRecipe> BREWING = register("brewing");
 
-    static <T extends Recipe<?>> RecipeType<T> register(String string) {
-        return Registry.register(BuiltInRegistries.RECIPE_TYPE, Constants.resourceLocation(string), new RecipeType<T>(){});
+    static <T extends Recipe<?>> RecipeType<T> register(String name) {
+        CommonClass.ignoreNameSpace.add(name);
+        return Registry.register(BuiltInRegistries.RECIPE_TYPE, Constants.resourceLocation(name), new RecipeType<T>(){});
     }
 
     static void init(){}
