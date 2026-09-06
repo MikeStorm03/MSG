@@ -13,8 +13,8 @@ This mod is currently focused on providing custom brewing recipe support through
 * Create custom brewing recipes using datapacks
 
 ### Planned Features
-
 More features will be added in future updates.
+You can also request your idea [here](https://github.com/MikeStorm03/MSG/issues)
 
 ## Installation
 
