@@ -8,6 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
+import net.neoforged.neoforge.network.configuration.SyncRegistries;
 import net.neoforged.neoforge.network.registration.HandlerThread;
 
 @Mod(value = Constants.MOD_ID, dist = Dist.CLIENT)

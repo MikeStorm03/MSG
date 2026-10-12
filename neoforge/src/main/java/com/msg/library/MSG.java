@@ -15,9 +15,12 @@ import com.msg.library.networking.MSGPackets;
 import com.msg.library.recipe.ModRecipeBookCategories;
 import com.msg.library.recipe.ModRecipeSerializers;
 import com.msg.library.recipe.ModRecipeType;
+import com.msg.library.recipe.brewing.PotionBrewingMixinAccess;
+import com.msg.library.resource.BrewingDisableListener;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -42,8 +45,8 @@ public class MSG {
 
     public static void customEventsRegistering(){
         DatapackReloadEvent.AFTER.register((server, reloadableServerResources, success) -> {
-            ConnectionHandling.loadBrewingInputs(reloadableServerResources.getRecipeManager());
-            Constants.LOG.info("Loading custom event.");
+            ConnectionHandling.loadBrewingInputs(server, reloadableServerResources.getRecipeManager());
+            ((PotionBrewingMixinAccess) server.potionBrewing()).onDatapackReload();
         });
     }
 
@@ -57,6 +60,7 @@ public class MSG {
 
     @SubscribeEvent
     public static void addServerReloadListenersEvent(AddServerReloadListenersEvent event) {
+        event.addListener(Constants.resourceLocation("brewing_disable"), new BrewingDisableListener());
         event.addListener(Constants.resourceLocation("datapack_reload_listener"), new DatapackReloadListener(event.getServerResources()));
     }
 
@@ -72,8 +76,9 @@ public class MSG {
 
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
-        ConnectionHandling.loadBrewingInputs(event.getServer().getRecipeManager());
-        Constants.LOG.info("Loaded server started event.");
+        MinecraftServer server = event.getServer();
+        ConnectionHandling.loadBrewingInputs(server, server.getRecipeManager());
+        ((PotionBrewingMixinAccess) server.potionBrewing()).onDatapackReload();
     }
 
     @SubscribeEvent
@@ -82,10 +87,10 @@ public class MSG {
         if (playerJoining == null)
             event.getRelevantPlayers().forEach(playerOnline -> {
                 if (!playerOnline.level().getServer().isSingleplayerOwner(playerOnline.nameAndId()))
-                    PacketDistributor.sendToPlayer(playerOnline, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewIngredients, ConnectionHandling.allBrewInputs));
+                    PacketDistributor.sendToPlayer(playerOnline, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewReagent, ConnectionHandling.allBrewInputs));
                 });
         else
             if (!playerJoining.level().getServer().isSingleplayerOwner(playerJoining.nameAndId()))
-                PacketDistributor.sendToPlayer(playerJoining, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewIngredients, ConnectionHandling.allBrewInputs));
+                PacketDistributor.sendToPlayer(playerJoining, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewReagent, ConnectionHandling.allBrewInputs));
     }
 }

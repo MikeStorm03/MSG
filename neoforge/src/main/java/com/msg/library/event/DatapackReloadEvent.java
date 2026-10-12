@@ -2,7 +2,6 @@ package com.msg.library.event;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 @SuppressWarnings("hiding")
 public class DatapackReloadEvent {

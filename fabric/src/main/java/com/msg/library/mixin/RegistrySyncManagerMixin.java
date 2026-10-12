@@ -12,10 +12,10 @@ import net.minecraft.resources.Identifier;
 @Mixin(RegistrySyncManager.class)
 public class RegistrySyncManagerMixin {
 
-    @ModifyVariable(method = "createAndPopulateRegistryMap",
-            at = @At(value = "STORE"),
-            ordinal = 1)
-    private static Identifier injected(Identifier id) {
-        return id.getNamespace() == "msg" && CommonClass.ignoreNameSpace.contains(id.getPath()) ? null : id;
-    }
+    // @ModifyVariable(method = "createAndPopulateRegistryMap",
+    //         at = @At(value = "STORE"),
+    //         ordinal = 1)
+    // private static Identifier injected(Identifier id) {
+    //     return id.getNamespace() == "msg" && CommonClass.ignoreNameSpace.contains(id.getPath()) ? null : id;
+    // }
 }

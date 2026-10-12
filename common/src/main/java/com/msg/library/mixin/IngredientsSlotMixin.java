@@ -24,10 +24,10 @@ public class IngredientsSlotMixin {
             at = @At("RETURN"),
             cancellable = true)
     private void injected(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
-        if (ConnectionHandling.allBrewIngredients != null)
-            for (ItemStackTemplate brewingIngredient : ConnectionHandling.allBrewIngredients)
-                if (itemStack.is(brewingIngredient.item()) &&
-                    brewingIngredient.components().equals(itemStack.getComponentsPatch())) {
+        if (ConnectionHandling.allBrewReagent != null)
+            for (ItemStackTemplate brewingReagent : ConnectionHandling.allBrewReagent)
+                if (itemStack.is(brewingReagent.item()) &&
+                    brewingReagent.components().equals(itemStack.getComponentsPatch())) {
                     cir.setReturnValue(true);
                     break;
                 }

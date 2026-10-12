@@ -25,9 +25,9 @@ public class PotionSlotMixin {
             cancellable = true)
     private static void injected(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
         if (ConnectionHandling.allBrewInputs != null)
-            for (ItemStackTemplate brewInputs : ConnectionHandling.allBrewInputs)
-                if (itemStack.is(brewInputs.item()) &&
-                    brewInputs.components().equals(itemStack.getComponentsPatch())) {
+            for (ItemStackTemplate brewInput : ConnectionHandling.allBrewInputs)
+                if (itemStack.is(brewInput.item()) &&
+                    brewInput.components().equals(itemStack.getComponentsPatch())) {
                     cir.setReturnValue(true);
                     break;
                 }

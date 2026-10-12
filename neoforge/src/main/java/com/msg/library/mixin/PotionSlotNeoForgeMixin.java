@@ -25,8 +25,8 @@ public class PotionSlotNeoForgeMixin {
             cancellable = true)
     private static void injected(PotionBrewing potionBrewing, ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
         if (ConnectionHandling.allBrewInputs != null)
-            for (ItemStackTemplate input: ConnectionHandling.allBrewInputs)
-                if (itemStack.is(input.item())) {
+            for (ItemStackTemplate brewInput : ConnectionHandling.allBrewInputs)
+                if (itemStack.is(brewInput.item())) {
                     cir.setReturnValue(true);
                     break;
                 }

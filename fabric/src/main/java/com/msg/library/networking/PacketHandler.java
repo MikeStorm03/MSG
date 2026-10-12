@@ -1,6 +1,7 @@
 package com.msg.library.networking;
 
 import com.msg.library.Constants;
+import com.msg.library.recipe.brewing.PotionBrewingMixinAccess;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -14,12 +15,16 @@ public class PacketHandler {
 
         // Getting Brewing ingredients when server started
         ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
-            ConnectionHandling.loadBrewingInputs(server.getRecipeManager());
+            ConnectionHandling.loadBrewingInputs(server, server.getRecipeManager());
+            ((PotionBrewingMixinAccess) server.potionBrewing()).onDatapackReload();
         });
 
         // Getting Brewing ingredients when reload datapack.
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
-            if (success) ConnectionHandling.loadBrewingInputs(server.getRecipeManager());
+            if (success) {
+                ConnectionHandling.loadBrewingInputs(server, server.getRecipeManager());
+                ((PotionBrewingMixinAccess) server.potionBrewing()).onDatapackReload();
+            }
         });
 
         // // Server register that client has mod
@@ -31,7 +36,7 @@ public class PacketHandler {
         // This doesn't send packet to singleplayer owner however
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
             if (!player.level().getServer().isSingleplayerOwner(player.nameAndId()))
-                ServerPlayNetworking.send(player, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewIngredients, ConnectionHandling.allBrewInputs));
+                ServerPlayNetworking.send(player, new MSGPackets.BrewingPackets(ConnectionHandling.allBrewReagent, ConnectionHandling.allBrewInputs));
         });
 
         // // Remove player that disconnected from list that contain players has mod installed
@@ -50,13 +55,13 @@ public class PacketHandler {
 
         // Client take the brewing ingredients sent by server
         ClientPlayNetworking.registerGlobalReceiver(MSGPackets.BrewingPackets.ID, (payload, context) -> {
-            ConnectionHandling.allBrewIngredients = payload.brewingIngredients();
+            ConnectionHandling.allBrewReagent = payload.brewingReagent();
             ConnectionHandling.allBrewInputs = payload.brewingInputs();
         });
 
         // Reset brewing ingredients to the client
         ClientPlayConnectionEvents.DISCONNECT.register((listener, client) -> {
-            ConnectionHandling.allBrewIngredients = null;
+            ConnectionHandling.allBrewReagent = null;
             ConnectionHandling.allBrewInputs = null;
         });
     }

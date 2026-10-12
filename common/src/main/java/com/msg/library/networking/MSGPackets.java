@@ -1,3 +1,10 @@
+/*
+Copyright (C) 2026 - MikeStorm03
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at https://mozilla.org/MPL/2.0/.
+*/
 package com.msg.library.networking;
 
 import java.util.HashSet;
@@ -25,11 +32,11 @@ public class MSGPackets {
 	// }
 
 	// This send brewing ingredient to the client so the animation sync better.
-	public record BrewingPackets(Set<ItemStackTemplate> brewingIngredients, Set<ItemStackTemplate> brewingInputs) implements CustomPacketPayload {
+	public record BrewingPackets(Set<ItemStackTemplate> brewingReagent, Set<ItemStackTemplate> brewingInputs) implements CustomPacketPayload {
 		public static final CustomPacketPayload.Type<BrewingPackets> ID = new CustomPacketPayload.Type<>(Constants.resourceLocation("brewing_ingredients"));
 		public static final StreamCodec<RegistryFriendlyByteBuf, BrewingPackets> CODEC = StreamCodec.composite(
 			ByteBufCodecs.collection(HashSet::new, ItemStackTemplate.STREAM_CODEC),
-			BrewingPackets::brewingIngredients,
+			BrewingPackets::brewingReagent,
 			ByteBufCodecs.collection(HashSet::new, ItemStackTemplate.STREAM_CODEC),
 			BrewingPackets::brewingInputs,
 			BrewingPackets::new

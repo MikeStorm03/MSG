@@ -38,29 +38,29 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingRecipeInput> {
-    protected final List<ItemStackTemplate> ingredients;
+    protected final List<ItemStackTemplate> reagent;
     protected final ItemStackTemplate input;
-    protected final ItemStackTemplate result;
+    protected final ItemStackTemplate output;
     public static final RecipeManager.CachedCheck<BrewingRecipeInput, ? extends BrewingRecipe> recipeCheck = RecipeManager.createCheck(ModRecipeType.BREWING);
     @Nullable
     private PlacementInfo placementInfo;
     public static final MapCodec<BrewingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(
                                                 instance -> instance.group(
-                                                    Codec.list(ItemStackTemplate.CODEC).fieldOf("ingredient").forGetter(r -> r.ingredients),
+                                                    Codec.list(ItemStackTemplate.CODEC).fieldOf("reagent").forGetter(r -> r.reagent),
                                                     ItemStackTemplate.CODEC.fieldOf("input").forGetter(r -> r.input),
-                                                    ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.result)
+                                                    ItemStackTemplate.CODEC.fieldOf("output").forGetter(r -> r.output)
                                                 ).apply(instance, BrewingRecipe::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, BrewingRecipe> STREAM_CODEC = StreamCodec.composite(
-                                                ByteBufCodecs.collection(ArrayList::new, ItemStackTemplate.STREAM_CODEC),BrewingRecipe::ingredients,
+                                                ByteBufCodecs.collection(ArrayList::new, ItemStackTemplate.STREAM_CODEC),BrewingRecipe::reagent,
                                                 ItemStackTemplate.STREAM_CODEC, BrewingRecipe::input,
-                                                ItemStackTemplate.STREAM_CODEC, BrewingRecipe::result,
+                                                ItemStackTemplate.STREAM_CODEC, BrewingRecipe::output,
                                                 BrewingRecipe::new);
     public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new RecipeSerializer<BrewingRecipe>(MAP_CODEC, STREAM_CODEC);
 
-    public BrewingRecipe(List<ItemStackTemplate> ingredients, ItemStackTemplate input, ItemStackTemplate output) {
-        this.ingredients = ingredients;
+    public BrewingRecipe(List<ItemStackTemplate> reagent, ItemStackTemplate input, ItemStackTemplate output) {
+        this.reagent = reagent;
         this.input = input;
-        this.result = output;
+        this.output = output;
     }
 
     @Override
@@ -71,16 +71,16 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         //                     this.input.getHoverName().getString(),
         //                     input.input().getHoverName().getString()
         //                 );
-        return matches(this.ingredients, input.ingredient()) && matches(this.input, input.input());
+        return matches(this.reagent, input.reagent()) && matches(this.input, input.input());
     }
 
     @Override
     public ItemStack assemble(BrewingRecipeInput input) {
-        return this.result.create();
+        return this.output.create();
     }
 
-    public ItemStackTemplate result(){
-        return this.result;
+    public ItemStackTemplate output(){
+        return this.output;
     }
 
     @Override
@@ -88,19 +88,19 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         return false;
     }
 
-    public List<ItemStackTemplate> ingredients(){
-        return this.ingredients;
+    public List<ItemStackTemplate> reagent(){
+        return this.reagent;
     }
 
     public List<Item> getIngredientItems() {
         List<Item> itemList = new ArrayList<>();
-        for (ItemStackTemplate template : this.ingredients) itemList.add(template.item().value());
+        for (ItemStackTemplate template : this.reagent) itemList.add(template.item().value());
         return itemList;
     }
 
     public List<ItemStack> getIngredientItemStacks() {
         List<ItemStack> ingredienItemStacks = new ArrayList<>();
-        for (ItemStackTemplate template : this.ingredients) ingredienItemStacks.add(template.create());
+        for (ItemStackTemplate template : this.reagent) ingredienItemStacks.add(template.create());
         return ingredienItemStacks;
     }
 
@@ -135,7 +135,7 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
     public PlacementInfo placementInfo() {
         if (this.placementInfo == null) {
             List<Ingredient> ingredientList = new ArrayList<>();
-            for (ItemStackTemplate itemStackTemplate : this.ingredients) ingredientList.add(Ingredient.of(itemStackTemplate.item().value()));
+            for (ItemStackTemplate itemStackTemplate : this.reagent) ingredientList.add(Ingredient.of(itemStackTemplate.item().value()));
             this.placementInfo = PlacementInfo.create(ingredientList);
         }
         return this.placementInfo;

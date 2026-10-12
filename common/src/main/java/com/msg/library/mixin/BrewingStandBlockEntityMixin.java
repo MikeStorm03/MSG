@@ -67,8 +67,8 @@ public class BrewingStandBlockEntityMixin {
 
                 if (recipe == null) nonNullList.set(i, potionBrewing.mix(ingredient, nonNullList.get(i)));
                 else {
-                    nonNullList.set(i, recipe.value().result().create());
-                    for (ItemStackTemplate recipeIngredient : recipe.value().ingredients()) 
+                    nonNullList.set(i, recipe.value().output().create());
+                    for (ItemStackTemplate recipeIngredient : recipe.value().reagent()) 
                         if (ingredient.is(recipeIngredient.item())) {
                             if (recipeIngredient.count() > ingredientCost)
                                 ingredientCost = recipeIngredient.count();

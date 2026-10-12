@@ -1,6 +1,6 @@
 {
     "type": "msg:brewing",
-    "ingredient": [
+    "reagent": [
         {
             "id": "minecraft:rotten_flesh"
         }
@@ -8,7 +8,7 @@
     "input": {
         "id": "minecraft:bowl"
     },
-    "result": {
+    "output": {
         "id": "minecraft:zombie_head"
     }
 }
