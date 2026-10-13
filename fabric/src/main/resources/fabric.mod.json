@@ -3,7 +3,7 @@
     "id": "${mod_id}",
     "version": "${version}",
     "name": "${mod_name}",
-    "description": "The MSG of contents making... FUIYOH~\\nA mod with data driven with some custom that help me and hopefully other content creators out there making content easier.",
+    "description": "${description}",
     "authors": [
         "${mod_author}"
     ],

@@ -1,8 +1,6 @@
 # MSG
 
-A Minecraft mod that allows players to create custom brewing recipes using datapacks.
-
-This mod is currently focused on providing custom brewing recipe support through datapacks, with more features planned for future updates.
+MSG was made for easier contents making. Provide some functionalities that you might need.
 
 > **Important:** This mod is required on both the client and server sides. It is not designed to work as a server-side-only mod.
 
@@ -10,17 +8,11 @@ This mod is currently focused on providing custom brewing recipe support through
 
 ### Currently Available
 
-* Create custom brewing recipes using datapacks
+* Ability to make custom potion brewing with datapack along with the ability to also disabling hardcoded recipes.
 
 ### Planned Features
 
 More features will be added in future updates.
-
-## Installation
-
-Install the mod on both the **client and server**.
-
-The mod is required on both sides and cannot be used as a server-side-only mod.
 
 ## License
 

@@ -8,8 +8,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 package com.msg.library;
 
-import com.msg.library.recipe.brewing.ModRecipeSerializers;
-import com.msg.library.recipe.brewing.ModRecipeType;
+import com.msg.library.recipe.ModRecipeSerializers;
+import com.msg.library.recipe.ModRecipeType;
 
 import net.fabricmc.api.ModInitializer;
 

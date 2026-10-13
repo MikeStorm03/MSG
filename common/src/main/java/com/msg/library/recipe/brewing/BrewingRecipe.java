@@ -10,6 +10,8 @@ package com.msg.library.recipe.brewing;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.msg.library.recipe.ModRecipeSerializers;
+import com.msg.library.recipe.ModRecipeType;
 import com.msg.library.recipe.NBTCraftingIngredients;
 
 // import com.msg.library.Constants;
@@ -24,44 +26,44 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingRecipeInput> {
-    protected final List<ItemStack> ingredients;
+    protected final List<ItemStack> reagents;
     protected final ItemStack input;
-    protected final ItemStack result;
+    protected final ItemStack output;
     public static final RecipeManager.CachedCheck<BrewingRecipeInput, ? extends BrewingRecipe> recipeCheck = RecipeManager.createCheck(ModRecipeType.BREWING);
 
-    public BrewingRecipe(List<ItemStack> ingredients, ItemStack input, ItemStack output) {
-        this.ingredients = ingredients;
+    public BrewingRecipe(List<ItemStack> reagents, ItemStack input, ItemStack output) {
+        this.reagents = reagents;
         this.input = input;
-        this.result = output;
+        this.output = output;
     }
 
     @Override
     public boolean matches(BrewingRecipeInput input, Level level) {
-        // Constants.LOG.info("Comparing Brewing Recipe:\n\tIngredient in recipe is {};\tIngredient input is {}\n\tInput in recipe is {};\tInput input is {}",
-        //                     ingredients.toString(),
-        //                     input.ingredient().getHoverName().getString(),
+        // Constants.LOG.info("Comparing Brewing Recipe:\n\tReagent in recipe is {};\tReagent input is {}\n\tInput in recipe is {};\tInput input is {}",
+        //                     reagents.toString(),
+        //                     input.reagent().getHoverName().getString(),
         //                     this.input.getHoverName().getString(),
         //                     input.input().getHoverName().getString()
         //                 );
-        return matches(this.ingredients, input.ingredient()) && matches(this.input, input.input());
+        return matches(this.reagents, input.reagent()) && matches(this.input, input.input());
     }
 
     public ItemStack assemble(BrewingRecipeInput input, HolderLookup.Provider registries) {
-        return this.result.copy();
+        return this.output.copy();
     }
 
     public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
-    public List<Item> getIngredientItems() {
+    public List<Item> getReagentItems() {
         List<Item> itemList = new ArrayList<>();
-        for (ItemStack ingredient : this.ingredients) itemList.add(ingredient.getItem());
+        for (ItemStack reagent : this.reagents) itemList.add(reagent.getItem());
         return itemList;
     }
 
-    public List<ItemStack> getIngredientItemStacks() {
-        return this.ingredients;
+    public List<ItemStack> getReagentItemStacks() {
+        return this.reagents;
     }
 
     public Item getInputItems() {
@@ -72,12 +74,12 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         return this.input;
     }
 
-    public ItemStack getResultItem() {
-        return this.result;
+    public ItemStack getOutputItem() {
+        return this.output;
     }
 
     public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return this.result;
+        return this.output;
     }
 
     public RecipeType<?> getType() {
@@ -85,7 +87,7 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
     }
 
     public interface Factory<T extends BrewingRecipe> {
-        T create(List<ItemStack> ingredients, ItemStack input, ItemStack result);
+        T create(List<ItemStack> reagents, ItemStack input, ItemStack output);
     }
 
     @Override

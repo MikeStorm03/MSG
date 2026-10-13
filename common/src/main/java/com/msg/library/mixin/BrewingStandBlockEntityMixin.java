@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import com.msg.library.recipe.brewing.BrewingRecipe;
 import com.msg.library.recipe.brewing.BrewingRecipeInput;
-import com.msg.library.recipe.brewing.ModRecipeType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -23,7 +22,6 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
@@ -32,19 +30,16 @@ import net.minecraft.world.level.block.state.BlockState;
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityMixin {
 
-    private static final RecipeManager.CachedCheck<BrewingRecipeInput, ? extends BrewingRecipe> recipeCheck = RecipeManager.createCheck(ModRecipeType.BREWING);
-
-
     @ModifyVariable(
         method = "Lnet/minecraft/world/level/block/entity/BrewingStandBlockEntity;serverTick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BrewingStandBlockEntity;)V",
         at = @At("STORE"),
         ordinal = 0
     )
     private static boolean modifyTestingForBrewingVariable(boolean bool, Level level, BlockPos blockPos, BlockState blockState, BrewingStandBlockEntity brewingStandBlockEntity){
-        ItemStack ingredient = brewingStandBlockEntity.getItem(3);
+        ItemStack reagent = brewingStandBlockEntity.getItem(3);
         @Nullable RecipeHolder<? extends BrewingRecipe> recipeHolder = null;
         for (int i = 0; i < 3; i++) {
-            recipeHolder = recipeCheck.getRecipeFor(new BrewingRecipeInput(ingredient, brewingStandBlockEntity.getItem(i)), level).orElse(null);
+            recipeHolder =  BrewingRecipe.recipeCheck.getRecipeFor(new BrewingRecipeInput(reagent, brewingStandBlockEntity.getItem(i)), level).orElse(null);
             if (recipeHolder != null) break; 
         }
         return bool || recipeHolder != null;
@@ -59,38 +54,38 @@ public class BrewingStandBlockEntityMixin {
         BlockEntity brewingStandBlockEntity = level.getBlockEntity(blockPos);
         if (brewingStandBlockEntity instanceof BrewingStandBlockEntity) {
 
-            ItemStack ingredient = (ItemStack)nonNullList.get(3);
+            ItemStack reagent = (ItemStack)nonNullList.get(3);
             @Nullable RecipeHolder<? extends BrewingRecipe> recipe;
             PotionBrewing potionBrewing = level.potionBrewing();
-            int ingredientCost = 1;
+            int reagentCost = 1;
 
             for (int i = 0; i < 3; i++) {
 
-                recipe = recipeCheck.getRecipeFor(new BrewingRecipeInput(ingredient, nonNullList.get(i)), level).orElse(null);
+                recipe = BrewingRecipe.recipeCheck.getRecipeFor(new BrewingRecipeInput(reagent, nonNullList.get(i)), level).orElse(null);
 
-                if (recipe == null) nonNullList.set(i, potionBrewing.mix(ingredient, nonNullList.get(i)));
+                if (recipe == null) nonNullList.set(i, potionBrewing.mix(reagent, nonNullList.get(i)));
                 else {
-                    nonNullList.set(i, recipe.value().getResultItem().copy());
-                    for (ItemStack recipeIngredient : recipe.value().getIngredientItemStacks()) 
-                        if (ItemStack.isSameItem(recipeIngredient, ingredient)) {
-                            if (recipeIngredient.getCount() > ingredientCost)
-                                ingredientCost = recipeIngredient.getCount();
+                    nonNullList.set(i, recipe.value().getOutputItem().copy());
+                    for (ItemStack recipeReagent : recipe.value().getReagentItemStacks()) 
+                        if (ItemStack.isSameItem(recipeReagent, reagent)) {
+                            if (recipeReagent.getCount() > reagentCost)
+                                reagentCost = recipeReagent.getCount();
                             break;
                         }
                 }
             }
 
-            ingredient.shrink(ingredientCost);
-            if (ingredient.getItem().hasCraftingRemainingItem()) {
-                ItemStack remainingItem = new ItemStack(ingredient.getItem().getCraftingRemainingItem());
-                if (ingredient.isEmpty()) {
-                    ingredient = remainingItem;
+            reagent.shrink(reagentCost);
+            if (reagent.getItem().hasCraftingRemainingItem()) {
+                ItemStack remainingItem = new ItemStack(reagent.getItem().getCraftingRemainingItem());
+                if (reagent.isEmpty()) {
+                    reagent = remainingItem;
                 } else {
                     Containers.dropItemStack(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), remainingItem);
                 }
             }
 
-            nonNullList.set(3, ingredient);
+            nonNullList.set(3, reagent);
             level.levelEvent(1035, blockPos, 0);
         }
     }

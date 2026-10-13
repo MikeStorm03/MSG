@@ -16,16 +16,16 @@ import net.minecraft.world.item.ItemStack;
 
 public interface NBTCraftingIngredients {
 
-    default boolean matches(@Nullable ItemStack ingredient, ItemStack itemStack) {
-        if (ItemStack.isSameItem(ingredient, itemStack) &&
-            ItemStack.isSameItemSameComponents(ingredient, itemStack) &&
-            ingredient.getCount() <= itemStack.getCount())
+    default boolean matches(@Nullable ItemStack reagent, ItemStack itemStack) {
+        if (ItemStack.isSameItem(reagent, itemStack) &&
+            ItemStack.isSameItemSameComponents(reagent, itemStack) &&
+            reagent.getCount() <= itemStack.getCount())
                 return true;
         return false;
     }
 
-    default boolean matches(@Nullable List<ItemStack> ingredients, ItemStack itemStack) {
-        for (ItemStack ingredient : ingredients) if (matches(ingredient, itemStack)) return true;
+    default boolean matches(@Nullable List<ItemStack> reagents, ItemStack itemStack) {
+        for (ItemStack reagent : reagents) if (matches(reagent, itemStack)) return true;
         return false;
     }
 }
