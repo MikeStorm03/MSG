@@ -115,7 +115,7 @@ processResources {
     }
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
-        expand (jsonExpandProps){escapeBackslash = true}
+        expand jsonExpandProps
     }
 
     inputs.properties(expandProps)

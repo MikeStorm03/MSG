@@ -26,7 +26,6 @@ public class MSG implements ModInitializer{
         ModRecipeSerializers.init();
         ModRecipeBookCategories.init();
 
-
         PacketHandler.payloadRegistering();
         PacketHandler.serverpacket();
 
