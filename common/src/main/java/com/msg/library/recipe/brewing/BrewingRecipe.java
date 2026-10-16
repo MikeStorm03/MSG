@@ -1,4 +1,5 @@
 /*
+MSG
 Copyright (C) 2026 - MikeStorm03
 
 This Source Code Form is subject to the terms of the Mozilla Public
@@ -32,33 +33,33 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingRecipeInput> {
-    protected final List<ItemStack> ingredients;
+    protected final List<ItemStack> regent;
     protected final ItemStack input;
-    protected final ItemStack result;
+    protected final ItemStack output;
     public static final RecipeManager.CachedCheck<BrewingRecipeInput, ? extends BrewingRecipe> recipeCheck = RecipeManager.createCheck(ModRecipeType.BREWING);
     @Nullable
     private PlacementInfo placementInfo;
 
-    public BrewingRecipe(List<ItemStack> ingredients, ItemStack input, ItemStack output) {
-        this.ingredients = ingredients;
+    public BrewingRecipe(List<ItemStack> regent, ItemStack input, ItemStack output) {
+        this.regent = regent;
         this.input = input;
-        this.result = output;
+        this.output = output;
     }
 
     @Override
     public boolean matches(BrewingRecipeInput input, Level level) {
         // Constants.LOG.info("Comparing Brewing Recipe:\n\tIngredient in recipe is {};\tIngredient input is {}\n\tInput in recipe is {};\tInput input is {}",
-        //                     ingredients.toString(),
-        //                     input.ingredient().getHoverName().getString(),
+        //                     regent.toString(),
+        //                     input.regent().getHoverName().getString(),
         //                     this.input.getHoverName().getString(),
         //                     input.input().getHoverName().getString()
         //                 );
-        return matches(this.ingredients, input.ingredient()) && matches(this.input, input.input());
+        return matches(this.regent, input.regent()) && matches(this.input, input.input());
     }
 
     @Override
     public ItemStack assemble(BrewingRecipeInput input, HolderLookup.Provider registries) {
-        return this.result.copy();
+        return this.output.copy();
     }
 
     @Override
@@ -70,17 +71,17 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         return true;
     }
 
-    public List<Item> getIngredientItems() {
+    public List<Item> regent() {
         List<Item> itemList = new ArrayList<>();
-        for (ItemStack ingredient : this.ingredients) itemList.add(ingredient.getItem());
+        for (ItemStack regent : this.regent) itemList.add(regent.getItem());
         return itemList;
     }
 
-    public List<ItemStack> getIngredientItemStacks() {
-        return this.ingredients;
+    public List<ItemStack> getRegentStacks() {
+        return this.regent;
     }
 
-    public Item getInputItems() {
+    public Item input() {
         return this.input.getItem();
     }
 
@@ -88,8 +89,8 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
         return this.input;
     }
 
-    public ItemStack getResultItem() {
-        return this.result;
+    public ItemStack getOutputItem() {
+        return this.output;
     }
 
     @Override
@@ -98,7 +99,7 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
     }
 
     public interface Factory<T extends BrewingRecipe> {
-        T create(List<ItemStack> ingredients, ItemStack input, ItemStack result);
+        T create(List<ItemStack> regent, ItemStack input, ItemStack output);
     }
 
     @Override
@@ -110,7 +111,7 @@ public class BrewingRecipe implements NBTCraftingIngredients, Recipe<BrewingReci
     public PlacementInfo placementInfo() {
         if (this.placementInfo == null) {
             List<Ingredient> ingredientList = new ArrayList<>();
-            for (ItemStack itemStack : this.ingredients) {
+            for (ItemStack itemStack : this.regent) {
                 ingredientList.add(Ingredient.of(itemStack.getItem()));
             }
             this.placementInfo = PlacementInfo.create(ingredientList);

@@ -1,4 +1,5 @@
 /*
+MSG
 Copyright (C) 2026 - MikeStorm03
 
 This Source Code Form is subject to the terms of the Mozilla Public
@@ -10,11 +11,11 @@ package com.msg.library.recipe.brewing;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 
-public record BrewingRecipeInput(ItemStack ingredient, ItemStack input) implements RecipeInput {
+public record BrewingRecipeInput(ItemStack regent, ItemStack input) implements RecipeInput {
     public ItemStack getItem(int i) {
         ItemStack stack;
         switch (i) {
-            case 0 -> stack = this.ingredient;
+            case 0 -> stack = this.regent;
             case 1 -> stack = this.input;
             default -> throw new IllegalArgumentException("Recipe does not contain slot " + i);
         }
@@ -27,6 +28,6 @@ public record BrewingRecipeInput(ItemStack ingredient, ItemStack input) implemen
     }
 
     public boolean isEmpty() {
-        return this.ingredient.isEmpty() && this.input.isEmpty();
+        return this.regent.isEmpty() && this.input.isEmpty();
     }
 }

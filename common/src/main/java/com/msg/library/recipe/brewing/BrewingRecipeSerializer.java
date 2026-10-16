@@ -1,4 +1,5 @@
 /*
+MSG
 Copyright (C) 2026 - MikeStorm03
 
 This Source Code Form is subject to the terms of the Mozilla Public
@@ -30,9 +31,9 @@ public class BrewingRecipeSerializer<T extends BrewingRecipe> implements RecipeS
         this.factory = factory;
         this.codec = RecordCodecBuilder.mapCodec((instance) -> {
             P3<Mu<T>, List<ItemStack>, ItemStack, ItemStack> var10000 = instance.group(
-                    Codec.list(ItemStack.STRICT_CODEC).fieldOf("ingredient").forGetter((brewingRecipe) -> brewingRecipe.ingredients),
+                    Codec.list(ItemStack.STRICT_CODEC).fieldOf("regent").forGetter((brewingRecipe) -> brewingRecipe.regent),
                     ItemStack.STRICT_SINGLE_ITEM_CODEC.fieldOf("input").forGetter((brewingRecipe) -> brewingRecipe.input),
-                    ItemStack.STRICT_SINGLE_ITEM_CODEC.fieldOf("result").forGetter((brewingRecipe) -> brewingRecipe.result)
+                    ItemStack.STRICT_SINGLE_ITEM_CODEC.fieldOf("output").forGetter((brewingRecipe) -> brewingRecipe.output)
             );
             Objects.requireNonNull(factory);
             return var10000.apply(instance, factory::create);   
@@ -49,19 +50,19 @@ public class BrewingRecipeSerializer<T extends BrewingRecipe> implements RecipeS
     }
 
     private T fromNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf) {
-        List<ItemStack> ingredients = ItemStack.OPTIONAL_LIST_STREAM_CODEC.decode(registryFriendlyByteBuf);
+        List<ItemStack> regent = ItemStack.OPTIONAL_LIST_STREAM_CODEC.decode(registryFriendlyByteBuf);
         ItemStack input = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
-        ItemStack result = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
-        return (T)this.factory.create(ingredients, input, result);
+        ItemStack output = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
+        return (T)this.factory.create(regent, input, output);
     }
 
     private void toNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf, T brewingRecipe) {
-        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.ingredients);
+        ItemStack.OPTIONAL_LIST_STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.regent);
         ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.input);
-        ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.result);
+        ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, brewingRecipe.output);
     }
 
-    public BrewingRecipe create(List<ItemStack> ingredients, ItemStack input, ItemStack itemStack) {
-        return this.factory.create(ingredients, input, itemStack);
+    public BrewingRecipe create(List<ItemStack> regent, ItemStack input, ItemStack itemStack) {
+        return this.factory.create(regent, input, itemStack);
     }
 }
